@@ -88,7 +88,7 @@ class DataSourceLoader implements Initializable {
         }
     }
 
-    private static class ExtendedXADataSource extends StandardXADataSource { // XAPOOL
+    public static class ExtendedXADataSource extends StandardXADataSource { // XAPOOL
         @Override
         public Connection getConnection() throws SQLException {
 
