@@ -28,7 +28,7 @@ public class DataSourceConfig {
     public static final String PREFIX = "datasource.";
 
     public static final String JNDI_NAME = PREFIX + "jndiName";
-    public static final String DRIVER = PREFIX + "name";
+    public static final String DRIVER = PREFIX + "driver";
     public static final String URL = PREFIX + "url";
     public static final String USER = PREFIX + "user";
     public static final String PASSWORD = PREFIX + "password";
