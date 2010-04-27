@@ -18,17 +18,17 @@ package de.cosmocode.palava.datasource;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
+ * Binds {@link DataSourceLoader} as eager singleton.
+ * 
  * @author Tobias Sarnowski
  */
 public class DataSourceModule implements Module {
-    private static final Logger LOG = LoggerFactory.getLogger(DataSourceModule.class);
 
     @Override
     public void configure(Binder binder) {
         binder.bind(DataSourceLoader.class).asEagerSingleton();
     }
+    
 }

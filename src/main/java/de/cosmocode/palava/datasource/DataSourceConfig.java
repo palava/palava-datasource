@@ -17,16 +17,27 @@
 package de.cosmocode.palava.datasource;
 
 /**
+ * Static constant holder class for datasource config key names.
+ * 
  * @author Tobias Sarnowski
+ * @author Willi Schoenborn
  */
-public class DataSourceConfig {
+public final class DataSourceConfig {
 
     public static final String PREFIX = "datasource.";
 
     public static final String JNDI_NAME = PREFIX + "jndiName";
+    
     public static final String DRIVER = PREFIX + "driver";
+    
     public static final String URL = PREFIX + "url";
+    
     public static final String USER = PREFIX + "user";
+    
     public static final String PASSWORD = PREFIX + "password";
+    
+    private DataSourceConfig() {
+        
+    }
 
 }
