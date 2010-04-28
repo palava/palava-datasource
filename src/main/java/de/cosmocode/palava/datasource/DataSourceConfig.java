@@ -40,4 +40,7 @@ public final class DataSourceConfig {
         
     }
 
+    public static final String POOL_MAX = PREFIX + "pool.max";
+    public static final String POOL_MIN = PREFIX + "pool.min";
+    
 }

@@ -28,7 +28,8 @@ public class DataSourceModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-        binder.bind(DataSourceLoader.class).asEagerSingleton();
+        binder.bind(XADataSource.class).asEagerSingleton();
+        binder.requestStaticInjection(XADataSource.class);
     }
     
 }
