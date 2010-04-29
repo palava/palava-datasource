@@ -1,50 +1,53 @@
 /**
- * palava - a java-php-bridge
- * Copyright (C) 2007-2010  CosmoCode GmbH
+ * Copyright 2010 CosmoCode GmbH
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package de.cosmocode.palava.datasource;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.name.Named;
-import de.cosmocode.palava.core.lifecycle.Initializable;
-import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import org.enhydra.jdbc.standard.StandardXADataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Wrapper;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.transaction.TransactionManager;
-import java.sql.Connection;
-import java.sql.SQLException;
+
+import org.enhydra.jdbc.standard.StandardXADataSource;
+
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.name.Named;
+
+import de.cosmocode.palava.core.lifecycle.Initializable;
+import de.cosmocode.palava.core.lifecycle.LifecycleException;
 
 /**
+ * Guicified {@link StandardXADataSource}.
+ * 
  * @author Tobias Sarnowski
+ * @author Willi Schoenborn
  */
-public class XADataSource extends StandardXADataSource implements Initializable {
-    private static final Logger LOG = LoggerFactory.getLogger(XADataSource.class);
+public class XADataSource extends StandardXADataSource implements Initializable, Wrapper {
+    
+    private static final long serialVersionUID = -6866388110619809098L;
 
     @Inject
-    public static Provider<TransactionManager> transactionManagerProvider;
+    private static Provider<TransactionManager> transactionManagerProvider;
 
-    public Provider<Context> contextProvider;
+    private Provider<Context> contextProvider;
 
     // configuration
     private String jndiName;
@@ -55,38 +58,34 @@ public class XADataSource extends StandardXADataSource implements Initializable 
     private int poolMax;
     private int poolMin;
 
-
-
     public XADataSource() {
         // used for jndi deserialization
     }
 
     @Inject
     public XADataSource(
-            Provider<Context> contextProvider,
-            @Named(DataSourceConfig.JNDI_NAME) String jndiName,
-            @Named(DataSourceConfig.DRIVER)
-            String driver,
-            @Named(DataSourceConfig.URL) String url,
-            @Named(DataSourceConfig.USER) String user,
-            @Named(DataSourceConfig.PASSWORD) String password,
-            @Named(DataSourceConfig.POOL_MAX) int poolMax,
-            @Named(DataSourceConfig.POOL_MIN) int poolMin
-    ) {
-        super();
-        this.contextProvider = contextProvider;
-        this.jndiName = jndiName;
-        this.driver = driver;
-        this.url = url;
-        this.user = user;
-        this.password = password;
-        this.poolMax = poolMax;
-        this.poolMin = poolMin;
+        Provider<Context> contextProvider,
+        @Named(DataSourceConfig.JNDI_NAME) String jndiName,
+        @Named(DataSourceConfig.DRIVER) String driver,
+        @Named(DataSourceConfig.URL) String url,
+        @Named(DataSourceConfig.USER) String user,
+        @Named(DataSourceConfig.PASSWORD) String password,
+        @Named(DataSourceConfig.POOL_MAX) int poolMax,
+        @Named(DataSourceConfig.POOL_MIN) int poolMin) {
+        
+        this.contextProvider = Preconditions.checkNotNull(contextProvider, "ContextProvider");
+        this.jndiName = Preconditions.checkNotNull(jndiName, "JndiName");
+        this.driver = Preconditions.checkNotNull(driver, "Driver");
+        this.url = Preconditions.checkNotNull(url, "Url");
+        this.user = Preconditions.checkNotNull(user, "User");
+        this.password = Preconditions.checkNotNull(password, "Password");
+        this.poolMax = Preconditions.checkNotNull(poolMax, "PoolMax");
+        this.poolMin = Preconditions.checkNotNull(poolMin, "PoolMin");
     }
 
     @Override
     public void initialize() throws LifecycleException {
-        Context ctx = contextProvider.get();
+        final Context context = contextProvider.get();
 
         try {
             this.setDriverName(driver);
@@ -94,17 +93,17 @@ public class XADataSource extends StandardXADataSource implements Initializable 
             throw new LifecycleException(e);
         }
 
-        this.setUrl(url);
-        this.setUser(user);
-        this.setPassword(password);
+        setUrl(url);
+        setUser(user);
+        setPassword(password);
 
-        this.setMaxCon(poolMax);
-        this.setMinCon(poolMin);
+        setMaxCon(poolMax);
+        setMinCon(poolMin);
 
-        this.setTransactionManager(transactionManagerProvider.get());
+        setTransactionManager(transactionManagerProvider.get());
 
         try {
-            ctx.bind(jndiName, this);
+            context.bind(jndiName, this);
         } catch (NamingException e) {
             throw new LifecycleException(e);
         }
@@ -112,7 +111,7 @@ public class XADataSource extends StandardXADataSource implements Initializable 
 
     @Override
     public Connection getConnection() throws SQLException {
-        this.setTransactionManager(transactionManagerProvider.get());
+        setTransactionManager(transactionManagerProvider.get());
         return super.getConnection();
     }
 
@@ -125,4 +124,5 @@ public class XADataSource extends StandardXADataSource implements Initializable 
     public boolean isWrapperFor(Class<?> aClass) throws SQLException {
         return false;
     }
+    
 }
