@@ -18,9 +18,12 @@ package de.cosmocode.palava.datasource;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Singleton;
+
+import javax.sql.XADataSource;
 
 /**
- * Binds {@link DataSourceLoader} as eager singleton.
+ * Binds {@link XADataSourceLoader} as eager singleton.
  * 
  * @author Tobias Sarnowski
  */
@@ -28,8 +31,7 @@ public class DataSourceModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-        binder.bind(XADataSource.class).asEagerSingleton();
-        binder.requestStaticInjection(XADataSource.class);
+        binder.bind(XADataSourceLoader.class).asEagerSingleton();
     }
     
 }

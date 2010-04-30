@@ -26,23 +26,19 @@ public final class DataSourceConfig {
 
     public static final String PREFIX = "datasource.";
 
+    public static final String UNIQUE = PREFIX + "unique";
+
     public static final String JNDI_NAME = PREFIX + "jndiName";
     
     public static final String DRIVER = PREFIX + "driver";
     
-    public static final String URL = PREFIX + "url";
-    
-    public static final String USER = PREFIX + "user";
-    
-    public static final String PASSWORD = PREFIX + "password";
-    
-    public static final String POOL_MAX = PREFIX + "pool.max";
-    
-    public static final String POOL_MIN = PREFIX + "pool.min";
-    
+    public static final String PROPERTIES = PREFIX + "properties";
+
     private DataSourceConfig() {
         
     }
 
+    public static final String POOL_MAX = PREFIX + "pool.max";
+    public static final String POOL_MIN = PREFIX + "pool.min";
     
 }
