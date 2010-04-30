@@ -16,81 +16,80 @@
 
 package de.cosmocode.palava.datasource;
 
-import bitronix.tm.resource.jdbc.PoolingDataSource;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.name.Named;
-import de.cosmocode.palava.core.lifecycle.Disposable;
-import de.cosmocode.palava.core.lifecycle.Initializable;
-import de.cosmocode.palava.core.lifecycle.LifecycleException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.sql.XADataSource;
-import javax.transaction.TransactionManager;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import bitronix.tm.resource.jdbc.PoolingDataSource;
+
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.name.Named;
+
+import de.cosmocode.palava.core.lifecycle.Disposable;
+import de.cosmocode.palava.core.lifecycle.Initializable;
+import de.cosmocode.palava.core.lifecycle.LifecycleException;
 
 /**
+ * A serice which loads a datasource and binds it in jndi.
+ * 
  * @author Tobias Sarnowski
  */
 final class XADataSourceLoader implements Initializable, Disposable {
+    
     private static final Logger LOG = LoggerFactory.getLogger(XADataSourceLoader.class);
 
-    public Provider<Context> contextProvider;
+    private final Provider<Context> contextProvider;
 
-    // configuration
-    private String unique;
-    private String jndiName;
-    private String driver;
-    private Properties properties;
-    private int poolMax;
-    private int poolMin;
+    private final String unique;
+    private final String jndiName;
+    private final String driver;
+    private final Properties properties;
+    private final int poolMax;
+    private final int poolMin;
 
-    private PoolingDataSource ds;
+    private final PoolingDataSource dataSource = new PoolingDataSource();
 
     @Inject
     public XADataSourceLoader(
-            Provider<Context> contextProvider,
-            @Named(DataSourceConfig.UNIQUE) String unique,
-            @Named(DataSourceConfig.JNDI_NAME) String jndiName,
-            @Named(DataSourceConfig.DRIVER) String driver,
-            @Named(DataSourceConfig.PROPERTIES) Properties properties,
-            @Named(DataSourceConfig.POOL_MAX) int poolMax,
-            @Named(DataSourceConfig.POOL_MIN) int poolMin
-    ) {
-        super();
-        this.contextProvider = contextProvider;
-        this.unique = unique;
-        this.jndiName = jndiName;
-        this.driver = driver;
-        this.properties = properties;
+        Provider<Context> contextProvider,
+        @Named(DataSourceConfig.UNIQUE) String unique,
+        @Named(DataSourceConfig.JNDI_NAME) String jndiName,
+        @Named(DataSourceConfig.DRIVER) String driver,
+        @Named(DataSourceConfig.PROPERTIES) Properties properties,
+        @Named(DataSourceConfig.POOL_MAX) int poolMax,
+        @Named(DataSourceConfig.POOL_MIN) int poolMin) {
+        
+        this.contextProvider = Preconditions.checkNotNull(contextProvider, "ContextProvier");
+        this.unique = Preconditions.checkNotNull(unique, "Unique");
+        this.jndiName = Preconditions.checkNotNull(jndiName, "JndiName");
+        this.driver = Preconditions.checkNotNull(driver, "Driver");
+        this.properties = Preconditions.checkNotNull(properties, "Properties");
         this.poolMax = poolMax;
         this.poolMin = poolMin;
     }
 
     @Override
     public void initialize() throws LifecycleException {
-        Context ctx = contextProvider.get();
+        final Context context = contextProvider.get();
 
-        ds = new PoolingDataSource();
-
-        ds.setUniqueName(unique);
-        ds.setClassName(driver);
-
-        ds.setMaxPoolSize(poolMax);
-        ds.setMinPoolSize(poolMin);
-
-        ds.getDriverProperties().putAll(properties);
-
-        ds.init();
+        dataSource.setUniqueName(unique);
+        dataSource.setClassName(driver);
+        dataSource.setMaxPoolSize(poolMax);
+        dataSource.setMinPoolSize(poolMin);
+        dataSource.getDriverProperties().putAll(properties);
+        dataSource.init();
 
         try {
-            LOG.trace("Binding XADataSource {} to {} [{}]", new Object[]{unique, jndiName, ds});
-            ctx.bind(jndiName, ds);
+            LOG.trace("Binding XADataSource {} to {} [{}]", new Object[] {
+                unique, jndiName, dataSource
+            });
+            context.bind(jndiName, dataSource);
         } catch (NamingException e) {
             throw new LifecycleException(e);
         }
@@ -98,6 +97,7 @@ final class XADataSourceLoader implements Initializable, Disposable {
 
     @Override
     public void dispose() throws LifecycleException {
-        ds.close();
+        dataSource.close();
     }
+    
 }

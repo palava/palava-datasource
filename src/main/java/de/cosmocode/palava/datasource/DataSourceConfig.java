@@ -33,12 +33,14 @@ public final class DataSourceConfig {
     public static final String DRIVER = PREFIX + "driver";
     
     public static final String PROPERTIES = PREFIX + "properties";
+    
+    public static final String POOL_MAX = PREFIX + "pool.max";
+    
+    public static final String POOL_MIN = PREFIX + "pool.min";
 
     private DataSourceConfig() {
         
     }
 
-    public static final String POOL_MAX = PREFIX + "pool.max";
-    public static final String POOL_MIN = PREFIX + "pool.min";
     
 }
