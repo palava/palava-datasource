@@ -34,7 +34,7 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractDataSourceModule.class);
 
 	private final String name;
-	private final Key<DataSourceProvider> key;
+	private final Key<DataSource> key;
 
 	private final DataSourceConfig config;
 
@@ -50,25 +50,23 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
     }
 
     public AbstractDataSourceModule(Class<? extends Annotation> annotation, String name) {
-        this.key = Key.get(DataSourceProvider.class, Preconditions.checkNotNull(annotation, "Annotation"));
+        this.key = Key.get(DataSource.class, Preconditions.checkNotNull(annotation, "Annotation"));
         this.name = Preconditions.checkNotNull(name, "Name");
         this.config = DataSourceConfig.named(name);
     }
 
     public AbstractDataSourceModule(Annotation annotation, String name) {
-        this.key = Key.get(DataSourceProvider.class, Preconditions.checkNotNull(annotation, "Annotation"));
+        this.key = Key.get(DataSource.class, Preconditions.checkNotNull(annotation, "Annotation"));
         this.name = Preconditions.checkNotNull(name, "Name");
         this.config = DataSourceConfig.named(name);
     }
 
     @Override
     protected void configuration() {
-        LOG.trace("Binding DataSource from Provider {} with configuration for {} using name {}", new Object[]{key, name, getDataSourceProvider()});
+        LOG.trace("Binding DataSource from Provider {} with configuration for {} using name {}", new Object[] {
+            getDataSourceProvider(), key, name});
 
-        // ??? bind(String.class).annotatedWith(Names.named(DataSourceConfig.UNIQUE)).toInstance(name);
-
-	    bind(String.class).annotatedWith(Names.named(DataSourceConfig.UNIQUE))
-			    .to(Key.get(String.class, Names.named(config.unique())));
+        bind(String.class).annotatedWith(Names.named(DataSourceConfig.UNIQUE)).toInstance(name);
 
 	    bind(String.class).annotatedWith(Names.named(DataSourceConfig.JNDI_NAME))
 			    .to(Key.get(String.class, Names.named(config.jndiName())));
@@ -86,16 +84,17 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
 
     @Override
     protected void optionals() {
+
     }
 
     @Override
     protected void bindings() {
-        //bind(key).to(getDataSourceProvider()).in(Singleton.class);
-	    bind(DataSource.class).to(Key.get(DataSource.class, Names.named(name))).asEagerSingleton();
+        bind(key).toProvider(getDataSourceProvider()).asEagerSingleton();
     }	
 
     @Override
     protected void expose() {
         expose(key);
     }
+
 }

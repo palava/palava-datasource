@@ -27,17 +27,17 @@ public final class DataSourceConfig {
 
     public static final String PREFIX = "datasource.";
 
-    public static final String UNIQUE = PREFIX + "unique";
+    public static final String UNIQUE = "unique";
 
-    public static final String JNDI_NAME = PREFIX + "jndiName";
+    public static final String JNDI_NAME = "jndiName";
     
-    public static final String DRIVER = PREFIX + "driver";
+    public static final String DRIVER = "driver";
+
+    public static final String PROPERTIES = "properties";
     
-    public static final String PROPERTIES = PREFIX + "properties";
+    public static final String POOL_MAX = "pool.max";
     
-    public static final String POOL_MAX = PREFIX + "pool.max";
-    
-    public static final String POOL_MIN = PREFIX + "pool.min";
+    public static final String POOL_MIN = "pool.min";
 
 
 	private String prefix;
@@ -50,10 +50,6 @@ public final class DataSourceConfig {
 	public static DataSourceConfig named(String name) {
 		Preconditions.checkNotNull(name, "Name");
 		return new DataSourceConfig(name);
-	}
-
-	public String unique() {
-		return prefix + UNIQUE;
 	}
 
 	public String jndiName() {
