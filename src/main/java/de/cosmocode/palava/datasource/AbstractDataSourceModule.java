@@ -42,7 +42,7 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
 	/**
 	 * @return provides the datasource provider to use
 	 */
-	protected abstract Class<? extends DataSourceProvider> getDataSourceProvider();
+	protected abstract Class<? extends DataSource> getDataSourceFactory();
 
 
     public AbstractDataSourceModule(String name) {
@@ -63,8 +63,8 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
 
     @Override
     protected void configuration() {
-        LOG.trace("Binding DataSource from Provider {} with configuration for {} using name {}", new Object[] {
-            getDataSourceProvider(), key, name});
+        LOG.trace("Binding DataSource from Factory {} with configuration for {} using name {}", new Object[] {
+            getDataSourceFactory(), key, name});
 
         bind(String.class).annotatedWith(Names.named(DataSourceConfig.UNIQUE)).toInstance(name);
 
@@ -89,8 +89,7 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
 
     @Override
     protected void bindings() {
-        bind(getDataSourceProvider()).asEagerSingleton();
-        bind(key).toProvider(getDataSourceProvider());
+        bind(key).to(getDataSourceFactory()).asEagerSingleton();
     }	
 
     @Override
