@@ -89,7 +89,8 @@ public abstract class AbstractDataSourceModule extends AbstractRebindModule {
 
     @Override
     protected void bindings() {
-        bind(key).toProvider(getDataSourceProvider()).asEagerSingleton();
+        bind(getDataSourceProvider()).asEagerSingleton();
+        bind(key).toProvider(getDataSourceProvider());
     }	
 
     @Override
