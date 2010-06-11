@@ -39,36 +39,36 @@ public final class DataSourceConfig {
     
     public static final String POOL_MIN = "pool.min";
 
+    private String prefix;
 
-	private String prefix;
-
-	private DataSourceConfig(String name) {
-		Preconditions.checkNotNull(name, "Name");
+    private DataSourceConfig(String name) {
+        Preconditions.checkNotNull(name, "Name");
         this.prefix = PREFIX + name + ".";
-	}
+    }
 
-	public static DataSourceConfig named(String name) {
-		Preconditions.checkNotNull(name, "Name");
-		return new DataSourceConfig(name);
-	}
+    public static DataSourceConfig named(String name) {
+        Preconditions.checkNotNull(name, "Name");
+        return new DataSourceConfig(name);
+    }
 
-	public String jndiName() {
-		return prefix + JNDI_NAME;
-	}
+    public String jndiName() {
+        return prefix + JNDI_NAME;
+    }
 
-	public String driver() {
-		return prefix + DRIVER;
-	}
+    public String driver() {
+        return prefix + DRIVER;
+    }
 
-	public String properties() {
-		return prefix + PROPERTIES;
-	}
+    public String properties() {
+        return prefix + PROPERTIES;
+    }
 
-	public String poolMax() {
-		return prefix + POOL_MAX;
-	}
+    public String poolMax() {
+        return prefix + POOL_MAX;
+    }
 
-	public String poolMin() {
-		return prefix + POOL_MIN;
-	}
+    public String poolMin() {
+        return prefix + POOL_MIN;
+    }
+    
 }

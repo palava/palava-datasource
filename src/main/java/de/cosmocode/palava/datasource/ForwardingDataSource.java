@@ -16,20 +16,20 @@
 
 package de.cosmocode.palava.datasource;
 
-import com.google.common.collect.ForwardingObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
+import com.google.common.collect.ForwardingObject;
+
 /**
+ * Abstract {@link DataSource} decorator.
+ * 
  * @author Tobias Sarnowski
  */
 public abstract class ForwardingDataSource extends ForwardingObject implements DataSource {
-    private static final Logger LOG = LoggerFactory.getLogger(ForwardingDataSource.class);
 
     @Override
     protected abstract DataSource delegate();
@@ -73,4 +73,5 @@ public abstract class ForwardingDataSource extends ForwardingObject implements D
     public int getLoginTimeout() throws SQLException {
         return delegate().getLoginTimeout();
     }
+    
 }
