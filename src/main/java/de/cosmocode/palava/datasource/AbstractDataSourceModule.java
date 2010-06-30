@@ -16,17 +16,20 @@
 
 package de.cosmocode.palava.datasource;
 
+import java.lang.annotation.Annotation;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import de.cosmocode.palava.core.inject.AbstractRebindModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
-import java.util.Properties;
+import de.cosmocode.palava.core.inject.AbstractRebindModule;
 
 /**
  * Abstract {@link Module} for {@link DataSource} bindings.
