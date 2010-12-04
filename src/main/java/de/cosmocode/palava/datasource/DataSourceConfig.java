@@ -46,27 +46,58 @@ public final class DataSourceConfig {
         this.prefix = PREFIX + name + ".";
     }
 
+    /**
+     * Static factory method for {@link DataSourceConfig}s.
+     * 
+     * @param name the name
+     * @return a new {@link DataSourceConfig}
+     */
     public static DataSourceConfig named(String name) {
         Preconditions.checkNotNull(name, "Name");
         return new DataSourceConfig(name);
     }
 
+    /**
+     * Provides the jndi name of this config.
+     * 
+     * @return the jndi name
+     */
     public String jndiName() {
         return prefix + JNDI_NAME;
     }
 
+    /**
+     * Provides the driver of this config.
+     * 
+     * @return the driver
+     */
     public String driver() {
         return prefix + DRIVER;
     }
 
+    /**
+     * Provides the properties path of this config.
+     * 
+     * @return the properties path
+     */
     public String properties() {
         return prefix + PROPERTIES;
     }
 
+    /**
+     * Provides the max pool size of this config.
+     * 
+     * @return the max pool size
+     */
     public String poolMax() {
         return prefix + POOL_MAX;
     }
 
+    /**
+     * Provides the min pool size of this config.
+     * 
+     * @return the min pool size
+     */
     public String poolMin() {
         return prefix + POOL_MIN;
     }
