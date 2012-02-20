@@ -4,7 +4,7 @@
   <parent>
     <groupId>de.cosmocode.palava</groupId>
     <artifactId>palava-parent</artifactId>
-    <version>2.6.0</version>
+    <version>2.6.2</version>
   </parent>
   <artifactId>palava-datasource</artifactId>
   <name>Palava DataSource</name>
@@ -21,9 +21,17 @@
   </repositories>
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
       <groupId>de.cosmocode.palava</groupId>
       <artifactId>palava-core</artifactId>
-      <version>[2.4,3)</version>
+      <version>[2.10.3,3)</version>
     </dependency>
   </dependencies>
 </project>
